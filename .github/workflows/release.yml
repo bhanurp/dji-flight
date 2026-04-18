@@ -1,0 +1,92 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build & Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+
+      - name: Build binaries
+        run: |
+          APP=dji-flight
+          VERSION=${{ steps.version.outputs.VERSION }}
+          LDFLAGS="-s -w -X main.version=${VERSION}"
+          mkdir -p dist
+
+          GOOS=darwin  GOARCH=amd64  go build -ldflags "${LDFLAGS}" -o dist/${APP}-darwin-amd64      ./cmd/${APP}
+          GOOS=darwin  GOARCH=arm64  go build -ldflags "${LDFLAGS}" -o dist/${APP}-darwin-arm64      ./cmd/${APP}
+          GOOS=linux   GOARCH=amd64  go build -ldflags "${LDFLAGS}" -o dist/${APP}-linux-amd64       ./cmd/${APP}
+          GOOS=linux   GOARCH=arm64  go build -ldflags "${LDFLAGS}" -o dist/${APP}-linux-arm64       ./cmd/${APP}
+          GOOS=windows GOARCH=amd64  go build -ldflags "${LDFLAGS}" -o dist/${APP}-windows-amd64.exe ./cmd/${APP}
+
+      - name: Generate checksums
+        run: |
+          cd dist
+          sha256sum * > checksums.txt
+          cat checksums.txt
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "dji-flight ${{ github.ref_name }}"
+          body: |
+            ## What's New
+            <!-- Add release notes here -->
+
+            ## Installation
+
+            **macOS (Apple Silicon)**
+            ```bash
+            curl -Lo dji-flight https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/dji-flight-darwin-arm64
+            chmod +x dji-flight && sudo mv dji-flight /usr/local/bin/
+            ```
+
+            **macOS (Intel)**
+            ```bash
+            curl -Lo dji-flight https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/dji-flight-darwin-amd64
+            chmod +x dji-flight && sudo mv dji-flight /usr/local/bin/
+            ```
+
+            **Linux (amd64)**
+            ```bash
+            curl -Lo dji-flight https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/dji-flight-linux-amd64
+            chmod +x dji-flight && sudo mv dji-flight /usr/local/bin/
+            ```
+
+            **Or use the install script:**
+            ```bash
+            curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/main/install.sh | bash
+            ```
+
+            ## Checksums
+            See `checksums.txt` attached below.
+          files: |
+            dist/dji-flight-darwin-amd64
+            dist/dji-flight-darwin-arm64
+            dist/dji-flight-linux-amd64
+            dist/dji-flight-linux-arm64
+            dist/dji-flight-windows-amd64.exe
+            dist/checksums.txt
+          draft: false
+          prerelease: false
