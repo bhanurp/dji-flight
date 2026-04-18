@@ -1,0 +1,17 @@
+# Binary
+dji-flight
+dji-flight-*
+
+# Build output
+dist/
+
+# macOS
+.DS_Store
+web/
+
+# IDE
+.vscode/
+.idea/
+
+# Claude memory
+.claude/
