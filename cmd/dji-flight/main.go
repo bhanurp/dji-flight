@@ -11,9 +11,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/bhanureddy/dji-flight/pkg/export"
-	"github.com/bhanureddy/dji-flight/pkg/parser"
-	"github.com/bhanureddy/dji-flight/pkg/server"
+	"github.com/bhanurp/dji-flight/pkg/export"
+	"github.com/bhanurp/dji-flight/pkg/parser"
+	"github.com/bhanurp/dji-flight/pkg/server"
 )
 
 const version = "0.1.0"

@@ -15,7 +15,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/bhanureddy/dji-flight/pkg/parser"
+	"github.com/bhanurp/dji-flight/pkg/parser"
 )
 
 // geocodeCache avoids hammering Nominatim for the same coordinates.
@@ -162,7 +162,7 @@ func Serve(port int, srtPaths []string) error {
 			http.Error(w, "request error", http.StatusInternalServerError)
 			return
 		}
-		req.Header.Set("User-Agent", "dji-flight/0.2 (github.com/bhanureddy/dji-flight)")
+		req.Header.Set("User-Agent", "dji-flight/0.2 (github.com/bhanurp/dji-flight)")
 		req.Header.Set("Accept-Language", "en")
 
 		client := &http.Client{Timeout: 5 * time.Second}

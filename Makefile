@@ -1,5 +1,5 @@
 APP     := dji-flight
-MODULE  := github.com/bhanureddy/dji-flight
+MODULE  := github.com/bhanurp/dji-flight
 VERSION := 0.2.0
 LDFLAGS := -ldflags "-s -w -X main.version=$(VERSION)"
 OUTDIR  := dist

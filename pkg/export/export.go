@@ -7,7 +7,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/bhanureddy/dji-flight/pkg/parser"
+	"github.com/bhanurp/dji-flight/pkg/parser"
 )
 
 // ToCSV writes frame-level telemetry as a CSV file.
